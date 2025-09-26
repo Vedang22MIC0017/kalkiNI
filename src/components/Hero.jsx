@@ -14,96 +14,103 @@ const HeroVideo = () => {
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const isMobile = useMobile();
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
+    const video = videoRef.current;
+    if (!video) return;
     
-    // Set up video to show first frame
-    v.muted = true;
-    v.pause();
+    // Set initial state
+    video.muted = true;
+    video.currentTime = 0;
     
-    // Event listeners to ensure first frame is shown
-    const handleLoadedMetadata = () => {
-      try {
-        v.currentTime = 0.01; // Seek to first frame
-      } catch (e) {
-        console.warn('Could not seek to first frame:', e);
-      }
-    };
-    
+    // Handle video events
     const handleLoadedData = () => {
-      setVideoLoaded(true);
-      try {
-        v.currentTime = 0.01; // Ensure we're at the first frame
-        // Force a repaint to show the first frame
-        v.pause();
-      } catch (e) {
-        console.warn('Could not seek to first frame on loadeddata:', e);
-      }
+      console.log('Video loaded and ready to play');
+      setIsLoaded(true);
+      // Set to first frame
+      video.currentTime = 0.1;
     };
     
-    const handleCanPlayThrough = () => {
-      try {
-        v.currentTime = 0.01; // Final attempt to show first frame
-      } catch (e) {
-        console.warn('Could not seek to first frame on canplaythrough:', e);
-      }
+    const handlePlay = () => {
+      console.log('Video started playing');
+      setIsPlaying(true);
+    };
+    
+    const handlePause = () => {
+      console.log('Video paused');
+      setIsPlaying(false);
     };
     
     const handleError = (e) => {
-      console.error('Video loading error:', e);
-      setVideoLoaded(true); // Remove loading overlay even on error
+      console.error('Video error:', e);
+      setIsLoaded(true); // Remove loading state
     };
     
-    const handleSeeked = () => {
-      // Called when currentTime is successfully changed
-      setVideoLoaded(true);
-    };
-    
-    v.addEventListener('loadedmetadata', handleLoadedMetadata);
-    v.addEventListener('loadeddata', handleLoadedData);
-    v.addEventListener('canplaythrough', handleCanPlayThrough);
-    v.addEventListener('error', handleError);
-    v.addEventListener('seeked', handleSeeked);
+    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+    video.addEventListener('error', handleError);
     
     return () => {
-      v.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      v.removeEventListener('loadeddata', handleLoadedData);
-      v.removeEventListener('canplaythrough', handleCanPlayThrough);
-      v.removeEventListener('error', handleError);
-      v.removeEventListener('seeked', handleSeeked);
+      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+      video.removeEventListener('error', handleError);
     };
   }, []);
 
+  const playVideo = async () => {
+    const video = videoRef.current;
+    if (!video || !isLoaded) return;
+    
+    try {
+      console.log('Attempting to play video');
+      await video.play();
+      console.log('Video playing successfully');
+    } catch (error) {
+      console.error('Failed to play video:', error);
+    }
+  };
+
+  const pauseVideo = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    
+    try {
+      video.pause();
+      console.log('Video paused successfully');
+    } catch (error) {
+      console.error('Failed to pause video:', error);
+    }
+  };
+
   const handleMouseEnter = () => {
-    if (isMobile) return; // Disable hover on mobile
-    const v = videoRef.current;
-    if (!v) return;
-    v.play();
-    setIsPlaying(true);
+    if (isMobile) return;
+    console.log('Mouse entered - attempting to play video');
+    playVideo();
   };
 
   const handleMouseLeave = () => {
-    if (isMobile) return; // Disable hover on mobile
-    const v = videoRef.current;
-    if (!v) return;
-    v.pause();
-    setIsPlaying(false);
+    if (isMobile) return;
+    console.log('Mouse left - pausing video');
+    pauseVideo();
   };
 
   const togglePlay = () => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (v.paused) {
-      v.play();
-      setIsPlaying(true);
+    const video = videoRef.current;
+    if (!video || !isLoaded) {
+      console.log('Video not ready');
+      return;
+    }
+    
+    console.log('Toggle play - current paused state:', video.paused);
+    if (video.paused) {
+      playVideo();
     } else {
-      v.pause();
-      setIsPlaying(false);
+      pauseVideo();
     }
   };
 
@@ -124,7 +131,7 @@ const HeroVideo = () => {
       onPointerLeave={handleMouseLeave}
     >
       {/* Loading overlay - shows until video is loaded */}
-      {!videoLoaded && (
+      {!isLoaded && (
         <div className="absolute inset-0 bg-n-8/20 backdrop-blur-[1px] flex items-center justify-center z-10">
           <div className="w-8 h-8 border-2 border-color-1 border-t-transparent rounded-full animate-spin"></div>
         </div>
@@ -132,13 +139,13 @@ const HeroVideo = () => {
       <video
         ref={videoRef}
         className={`w-full h-full object-cover transition-opacity duration-300 ${
-          videoLoaded ? 'opacity-100' : 'opacity-90'
+          isLoaded ? 'opacity-100' : 'opacity-90'
         }`}
         poster="/videos/hero-vid3-poster.jpg"
         playsInline
         muted
         loop
-        preload="metadata"
+        preload="auto"
       >
         <source src="/videos/hero-vid3.mp4" type="video/mp4" media="(min-width: 1024px)" />
         <source src="/videos/hero-vid3.mp4" type="video/mp4" media="(min-width: 768px)" />
@@ -149,8 +156,13 @@ const HeroVideo = () => {
       {/* Play/Pause button for small devices - top left */}
       <button
         type="button"
-        className="sm:hidden absolute top-2 left-2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center z-30"
+        className={`sm:hidden absolute top-2 left-2 w-10 h-10 rounded-full backdrop-blur-sm border flex items-center justify-center z-30 transition-all duration-200 ${
+          isLoaded 
+            ? 'bg-black/50 border-white/20 text-white cursor-pointer hover:bg-black/70' 
+            : 'bg-gray-600/50 border-gray-400/20 text-gray-400 cursor-not-allowed'
+        }`}
         onClick={togglePlay}
+        disabled={!isLoaded}
         aria-label={isPlaying ? "Pause video" : "Play video"}
       >
         <div className="text-white">
