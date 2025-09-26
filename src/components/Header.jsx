@@ -7,12 +7,14 @@ import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/Header";
 import { useEffect, useRef, useState } from "react";
+import useMobile from "../hooks/useMobile";
 
 const Header = () => {
   const pathname = useLocation();
   const [openNavigation, setOpenNavigation] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const lastYRef = useRef(window.scrollY);
+  const isMobile = useMobile();
 
   useEffect(() => {
     const onScroll = () => {
@@ -87,9 +89,9 @@ const Header = () => {
                 key={item.to}
                 to={item.to}
                 onClick={handleClick}
-                className={`block relative font-code text-2xl uppercase text-n-1 transition-colors hover:text-color-1 px-6 py-6 md:py-8 lg:-mr-0.25 lg:text-xs lg:font-semibold ${
+                className={`block relative font-code text-2xl uppercase text-n-1 ${isMobile ? "" : "transition-colors hover:text-color-1"} px-6 py-6 md:py-8 lg:-mr-0.25 lg:text-xs lg:font-semibold ${
                   pathname.pathname === item.to ? "z-2 lg:text-n-1" : "lg:text-n-1/50"
-                } lg:leading-5 lg:hover:text-n-1 xl:px-12`}
+                } lg:leading-5 ${isMobile ? "" : "lg:hover:text-n-1"} xl:px-12`}
               >
                 {item.title}
               </Link>
@@ -101,7 +103,7 @@ const Header = () => {
 
         <a
           href="#signup"
-          className="button hidden mr-8 text-n-1/50 transition-colors hover:text-n-1 lg:block"
+          className={`button hidden mr-8 text-n-1/50 ${isMobile ? "" : "transition-colors hover:text-n-1"} lg:block`}
         >
           New account
         </a>

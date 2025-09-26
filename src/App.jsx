@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Features from "./pages/Features";
 import PricingPage from "./pages/PricingPage";
 import Contact from "./pages/Contact";
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
   const location = useLocation();
@@ -33,6 +34,7 @@ const App = () => {
 
   return (
     <>
+      <ScrollToTop />
       {renderMatrixRain()}
       <div className="pt-12 md:pt-14 lg:pt-[4.5rem] overflow-hidden min-h-screen">
         <Header />

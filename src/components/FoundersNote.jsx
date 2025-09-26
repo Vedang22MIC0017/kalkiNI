@@ -5,12 +5,13 @@ import founder2 from '../assets/founder2.svg';
 import founder3 from '../assets/founder3.svg';
 import linkedinIcon from '../assets/linkedin.svg';
 import twitterIcon from '../assets/twitter.svg';
+import useMobile from '../hooks/useMobile';
 
 // Founder Profile Component
-const FounderProfile = ({ image, name, role, bio, linkedin, twitter }) => {
+const FounderProfile = ({ image, name, role, bio, linkedin, twitter, isMobile }) => {
   return (
     <div className="relative group">
-      <div className="p-[1px] rounded-2xl bg-gradient-to-r from-purple-500 via-blue-500 to-green-500 transition-transform hover:scale-105">
+      <div className={`p-[1px] rounded-2xl bg-gradient-to-r from-purple-500 via-blue-500 to-green-500 ${isMobile ? "" : "transition-transform hover:scale-105"}`}>
         <div className="rounded-[1rem] p-6 bg-n-8/90 backdrop-blur border border-white/10 h-full">
           <div className="flex flex-col items-center text-center space-y-4">
             {/* Profile Image */}
@@ -33,7 +34,7 @@ const FounderProfile = ({ image, name, role, bio, linkedin, twitter }) => {
                 href={linkedin} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors group"
+                className={`p-2 rounded-full bg-white/10 ${isMobile ? "" : "hover:bg-white/20 transition-colors"} group`}
               >
                 <img src={linkedinIcon} alt="LinkedIn" className="w-5 h-5 text-white" />
               </a>
@@ -41,7 +42,7 @@ const FounderProfile = ({ image, name, role, bio, linkedin, twitter }) => {
                 href={twitter} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors group"
+                className={`p-2 rounded-full bg-white/10 ${isMobile ? "" : "hover:bg-white/20 transition-colors"} group`}
               >
                 <img src={twitterIcon} alt="Twitter" className="w-5 h-5 text-white" />
               </a>
@@ -54,6 +55,7 @@ const FounderProfile = ({ image, name, role, bio, linkedin, twitter }) => {
 };
 
 const FoundersNote = () => {
+  const isMobile = useMobile();
   const founders = [
     {
       name: "Alex Chen",
@@ -84,19 +86,21 @@ const FoundersNote = () => {
   return (
     <Section id="founders-note">
       <div className="container relative">
-        {/* Animated Background Pattern */}
-        <div className="absolute inset-0 h-full w-full opacity-10 pointer-events-none">
-          <div className="absolute top-10 left-10 w-20 h-20 bg-purple-500/30 rounded-full animate-pulse"></div>
-          <div className="absolute top-32 right-16 w-16 h-16 bg-blue-500/30 rounded-full animate-bounce delay-100"></div>
-          <div className="absolute bottom-20 left-20 w-12 h-12 bg-green-500/30 rounded-full animate-ping delay-200"></div>
-          <div className="absolute bottom-32 right-32 w-24 h-24 bg-yellow-500/30 rounded-full animate-pulse delay-300"></div>
-          <div className="absolute top-1/2 left-1/2 w-8 h-8 bg-pink-500/30 rounded-full animate-bounce delay-500 transform -translate-x-1/2 -translate-y-1/2"></div>
-        </div>
+        {/* Animated Background Pattern - disabled on mobile */}
+        {!isMobile && (
+          <div className="absolute inset-0 h-full w-full opacity-10 pointer-events-none">
+            <div className="absolute top-10 left-10 w-20 h-20 bg-purple-500/30 rounded-full animate-pulse"></div>
+            <div className="absolute top-32 right-16 w-16 h-16 bg-blue-500/30 rounded-full animate-bounce delay-100"></div>
+            <div className="absolute bottom-20 left-20 w-12 h-12 bg-green-500/30 rounded-full animate-ping delay-200"></div>
+            <div className="absolute bottom-32 right-32 w-24 h-24 bg-yellow-500/30 rounded-full animate-pulse delay-300"></div>
+            <div className="absolute top-1/2 left-1/2 w-8 h-8 bg-pink-500/30 rounded-full animate-bounce delay-500 transform -translate-x-1/2 -translate-y-1/2"></div>
+          </div>
+        )}
         
         {/* Content */}
         <div className="relative z-10">
           {/* Header */}
-          <div className="text-center mb-16" data-animate>
+          <div className="text-center mb-16">
             <h2 className="h2 mb-6">
               <span className="relative inline-block">
                 Meet Our Founders
@@ -110,14 +114,14 @@ const FoundersNote = () => {
           </div>
           
           {/* Founders Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16" data-animate>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {founders.map((founder, index) => (
-              <FounderProfile key={index} {...founder} />
+              <FounderProfile key={index} {...founder} isMobile={isMobile} />
             ))}
           </div>
           
           {/* Common Message */}
-          <div className="text-center" data-animate>
+          <div className="text-center">
             <div className="p-[1px] rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 max-w-4xl mx-auto">
               <div className="rounded-[1rem] p-8 md:p-10 bg-n-8/90 backdrop-blur border border-white/10">
                 <h3 className="h4 mb-6 text-white">A Message from Our Founders</h3>

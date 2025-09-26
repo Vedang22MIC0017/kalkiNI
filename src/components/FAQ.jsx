@@ -1,5 +1,6 @@
 import Section from "./Section";
 import Tagline from "./Tagline";
+import useMobile from "../hooks/useMobile";
 
 const faqs = [
   { q: "What is the AI Surveillance System?", a: "It’s a computer-vision layer that augments your existing CCTV with AI for detection, alerts, and insights—without replacing your cameras." },
@@ -11,11 +12,13 @@ const faqs = [
 ];
 
 const FAQ = () => {
+  const isMobile = useMobile();
+  
   return (
     <Section id="faq">
       <div className="container">
         {/* Title/Intro stacked on top */}
-        <div className="space-y-4 mb-8" data-animate>
+        <div className="space-y-4 mb-8">
           <Tagline className="md:justify-start">Your Queries Answered</Tagline>
           <h2 className="h2">
             <span className="relative inline-block">
@@ -29,15 +32,15 @@ const FAQ = () => {
         </div>
 
         {/* Questions list stacked below */}
-        <div className="grid gap-5" data-animate>
+        <div className="grid gap-5">
           {faqs.map((item, i) => (
-            <div key={i} className="p-[1px] rounded-2xl bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 transition-transform hover:scale-[1.005]">
+            <div key={i} className={`p-[1px] rounded-2xl bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 ${isMobile ? "" : "transition-transform hover:scale-[1.005]"}`}>
               <details className="group rounded-[1rem] p-5 md:p-6 bg-n-8/60 backdrop-blur border border-white/10">
                 <summary className="cursor-pointer flex items-start justify-between gap-4">
                   <span className="font-semibold text-base md:text-lg leading-6 hover-highlight">
                     {item.q}
                   </span>
-                  <span className="shrink-0 w-8 h-8 rounded-full bg-n-7/80 border border-white/10 flex items-center justify-center transition-transform group-open:rotate-90">
+                  <span className={`shrink-0 w-8 h-8 rounded-full bg-n-7/80 border border-white/10 flex items-center justify-center ${isMobile ? "" : "transition-transform group-open:rotate-90"}`}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>

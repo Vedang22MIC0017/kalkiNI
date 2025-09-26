@@ -8,10 +8,13 @@ import Generating from "./Generating";
 import Notification from "./Notification";
 import CompanyLogos from "./CompanyLogos";
 import { useEffect, useRef, useState } from "react";
+import useMobile from "../hooks/useMobile";
 
 const HeroVideo = () => {
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const isMobile = useMobile();
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -24,15 +27,31 @@ const HeroVideo = () => {
   }, []);
 
   const handleMouseEnter = () => {
+    if (isMobile) return; // Disable hover on mobile
     const v = videoRef.current;
     if (!v) return;
     v.play();
+    setIsPlaying(true);
   };
 
   const handleMouseLeave = () => {
+    if (isMobile) return; // Disable hover on mobile
     const v = videoRef.current;
     if (!v) return;
     v.pause();
+    setIsPlaying(false);
+  };
+
+  const togglePlay = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play();
+      setIsPlaying(true);
+    } else {
+      v.pause();
+      setIsPlaying(false);
+    }
   };
 
   const toggleMute = () => {
@@ -45,7 +64,7 @@ const HeroVideo = () => {
   return (
     <div
       ref={containerRef}
-      className="w-full h-full"
+      className="w-full h-full relative"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onPointerEnter={handleMouseEnter}
@@ -71,6 +90,30 @@ const HeroVideo = () => {
         Your browser does not support the video tag.
       </video>
 
+      {/* Play/Pause button for small devices - top left */}
+      <button
+        type="button"
+        className="sm:hidden absolute top-2 left-2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center z-20"
+        onClick={togglePlay}
+        aria-label={isPlaying ? "Pause video" : "Play video"}
+      >
+        <div className="text-white">
+          {isPlaying ? (
+            // Pause icon
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16" />
+              <rect x="14" y="4" width="4" height="16" />
+            </svg>
+          ) : (
+            // Play icon
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="8,5 19,12 8,19" />
+            </svg>
+          )}
+        </div>
+      </button>
+
+      {/* Mute button - visible on all devices */}
       <div className="absolute top-2 right-2 flex gap-2 z-10">
         <button
           type="button"
@@ -96,7 +139,7 @@ const Hero = () => {
       <div className="container relative" ref={parallaxRef}>
         <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-[3.875rem] md:mb-20 lg:mb-[6.25rem]">
           <h1 className="h1 mb-6">
-            Explore the Possibilities of&nbsp;AI&nbsp;Protection with {` `}
+            Explore the Possibilities of&nbsp;AI&nbsp;defense with {` `}
             <span className="inline-block relative">
               KalkiNI{" "}
               <img

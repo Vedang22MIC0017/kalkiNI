@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Section from "./Section";
+import useMobile from "../hooks/useMobile";
 
 const ContactUs = () => {
+  const isMobile = useMobile();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -27,17 +29,19 @@ const ContactUs = () => {
   return (
     <Section id="contact">
       <div className="container">
-        {/* Animated Background Pattern */}
-        <div className="absolute inset-0 h-full w-full opacity-5 pointer-events-none">
-          <div className="absolute top-16 left-16 w-32 h-32 bg-blue-500/20 rounded-full animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-20 h-20 bg-purple-500/20 rounded-full animate-bounce delay-100"></div>
-          <div className="absolute bottom-24 left-32 w-16 h-16 bg-green-500/20 rounded-full animate-ping delay-200"></div>
-          <div className="absolute bottom-40 right-40 w-28 h-28 bg-yellow-500/20 rounded-full animate-pulse delay-300"></div>
-        </div>
+        {/* Animated Background Pattern - disabled on mobile */}
+        {!isMobile && (
+          <div className="absolute inset-0 h-full w-full opacity-5 pointer-events-none">
+            <div className="absolute top-16 left-16 w-32 h-32 bg-blue-500/20 rounded-full animate-pulse"></div>
+            <div className="absolute top-40 right-20 w-20 h-20 bg-purple-500/20 rounded-full animate-bounce delay-100"></div>
+            <div className="absolute bottom-24 left-32 w-16 h-16 bg-green-500/20 rounded-full animate-ping delay-200"></div>
+            <div className="absolute bottom-40 right-40 w-28 h-28 bg-yellow-500/20 rounded-full animate-pulse delay-300"></div>
+          </div>
+        )}
 
         <div className="relative z-10">
           {/* Header */}
-          <div className="text-center mb-16" data-animate>
+          <div className="text-center mb-16">
             <h2 className="h2 mb-6">
               <span className="relative inline-block">
                 Get In Touch
@@ -52,7 +56,7 @@ const ContactUs = () => {
 
           <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
             {/* Contact Form */}
-            <div data-animate>
+            <div>
               <div className="p-[1px] rounded-2xl bg-gradient-to-r from-purple-500 via-blue-500 to-green-500">
                 <div className="rounded-[1rem] p-8 bg-n-8/90 backdrop-blur border border-white/10">
                   <h3 className="h4 mb-6 text-white">Send us a message</h3>
@@ -66,7 +70,7 @@ const ContactUs = () => {
                           value={formData.name}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 rounded-xl bg-n-7/50 border border-white/10 text-white placeholder-n-4 focus:border-purple-400 focus:outline-none transition-colors" 
+                          className={`w-full px-4 py-3 rounded-xl bg-n-7/50 border border-white/10 text-white placeholder-n-4 focus:border-purple-400 focus:outline-none ${isMobile ? "" : "transition-colors"}`}
                           placeholder="Your full name" 
                         />
                       </div>
@@ -78,7 +82,7 @@ const ContactUs = () => {
                           value={formData.email}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 rounded-xl bg-n-7/50 border border-white/10 text-white placeholder-n-4 focus:border-purple-400 focus:outline-none transition-colors" 
+                          className={`w-full px-4 py-3 rounded-xl bg-n-7/50 border border-white/10 text-white placeholder-n-4 focus:border-purple-400 focus:outline-none ${isMobile ? "" : "transition-colors"}`}
                           placeholder="your.email@example.com" 
                         />
                       </div>
@@ -90,7 +94,7 @@ const ContactUs = () => {
                         name="subject"
                         value={formData.subject}
                         onChange={handleChange}
-                        className="w-full px-4 py-3 rounded-xl bg-n-7/50 border border-white/10 text-white placeholder-n-4 focus:border-purple-400 focus:outline-none transition-colors" 
+                        className={`w-full px-4 py-3 rounded-xl bg-n-7/50 border border-white/10 text-white placeholder-n-4 focus:border-purple-400 focus:outline-none ${isMobile ? "" : "transition-colors"}`}
                         placeholder="How can we help you?" 
                       />
                     </div>
@@ -102,13 +106,13 @@ const ContactUs = () => {
                         onChange={handleChange}
                         required
                         rows={5}
-                        className="w-full px-4 py-3 rounded-xl bg-n-7/50 border border-white/10 text-white placeholder-n-4 focus:border-purple-400 focus:outline-none transition-colors resize-none" 
+                        className={`w-full px-4 py-3 rounded-xl bg-n-7/50 border border-white/10 text-white placeholder-n-4 focus:border-purple-400 focus:outline-none resize-none ${isMobile ? "" : "transition-colors"}`}
                         placeholder="Tell us about your project or question..." 
                       />
                     </div>
                     <button 
                       type="submit"
-                      className="w-full px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold hover:from-purple-600 hover:to-blue-600 transition-all duration-300 transform hover:scale-105"
+                      className={`w-full px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold ${isMobile ? "" : "hover:from-purple-600 hover:to-blue-600 transition-all duration-300 transform hover:scale-105"}`}
                     >
                       Send Message
                     </button>
@@ -118,7 +122,7 @@ const ContactUs = () => {
             </div>
 
             {/* Contact Information */}
-            <div className="space-y-8" data-animate>
+            <div className="space-y-8">
               <div>
                 <h3 className="h4 mb-6 text-white">Contact Information</h3>
                 <div className="space-y-6">
