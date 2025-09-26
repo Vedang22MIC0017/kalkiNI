@@ -86,3 +86,27 @@
 .-rotate-360 {
   @apply rotate-[-360deg]
 }
+
+/* Hover utilities */
+.hover-card {
+  transition: transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease;
+}
+.hover-card:hover {
+  transform: translateY(-0.25rem);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.hover-zoom {
+  transition: transform 400ms ease;
+}
+.hover-zoom:hover {
+  transform: scale(1.02);
+}
+
+.hover-highlight {
+  transition: color 250ms ease, text-shadow 250ms ease;
+}
+.hover-highlight:hover {
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+}

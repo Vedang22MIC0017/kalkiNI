@@ -4,10 +4,22 @@ import Heading from "./Heading";
 import PricingList from "./PricingList";
 import { LeftLine, RightLine } from "./design/Pricing";
 
+import { useEffect, useRef, useState } from "react";
+
 const Pricing = () => {
   return (
     <Section className="overflow-hidden" id="pricing">
-      <div className="container relative z-2">
+      <div className="container relative z-2" onMouseMove={(e) => {
+        const target = e.currentTarget;
+        const rect = target.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const orb = target.querySelector(".pricing-orb");
+        if (orb) {
+          orb.style.transform = `translate(${x - 150}px, ${y - 150}px)`;
+        }
+      }}>
+        <div className="pricing-orb hidden lg:block pointer-events-none absolute top-0 left-0 w-[300px] h-[300px] rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15),rgba(0,0,0,0)_60%)] blur-2xl" />
         <div className="hidden relative justify-center mb-[6.5rem] lg:flex">
           <img
             src={smallSphere}

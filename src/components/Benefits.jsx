@@ -14,26 +14,31 @@ const Benefits = () => {
           title="Chat Smarter, Not Harder with Brainwave"
         />
 
-        <div className="flex flex-wrap gap-10 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
           {benefits.map((item) => (
             <div
-              className="block relative p-0.5 bg-no-repeat bg-[length:100%_100%] md:max-w-[24rem]"
+              className="block relative p-0.5 bg-no-repeat bg-[length:100%_100%] hover-card"
               style={{
                 backgroundImage: `url(${item.backgroundUrl})`,
               }}
               key={item.id}
+              data-animate
             >
-              <div className="relative z-2 flex flex-col min-h-[22rem] p-[2.4rem] pointer-events-none">
-                <h5 className="h5 mb-5">{item.title}</h5>
-                <p className="body-2 mb-6 text-n-3">{item.text}</p>
-                <div className="flex items-center mt-auto">
+              <div className="relative z-2 flex flex-col min-h-[22rem] p-[2.4rem]">
+                <h5 className="h5 mb-5 hover-highlight" data-animate>
+                  {item.title}
+                </h5>
+                <p className="body-2 mb-6 text-n-3 hover-highlight" data-animate>
+                  {item.text}
+                </p>
+                <div className="flex items-center mt-auto" data-animate>
                   <img
                     src={item.iconUrl}
                     width={48}
                     height={48}
                     alt={item.title}
                   />
-                  <p className="ml-auto font-code text-xs font-bold text-n-1 uppercase tracking-wider">
+                  <p className="ml-auto font-code text-xs font-bold text-n-1 uppercase tracking-wider hover-highlight">
                     Explore more
                   </p>
                   <Arrow />
@@ -53,7 +58,7 @@ const Benefits = () => {
                       width={380}
                       height={362}
                       alt={item.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover hover-zoom"
                     />
                   )}
                 </div>
