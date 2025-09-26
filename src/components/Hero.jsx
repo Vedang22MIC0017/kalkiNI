@@ -65,9 +65,9 @@ const HeroVideo = () => {
           }
         }}
       >
-        <source src="/src/assets/videos/hero-vid3.mov" type="video/mp4" media="(min-width: 1024px)" />
-        <source src="src/assets/videos/hero-vid3.mov" type="video/mp4" media="(min-width: 768px)" />
-        <source src="src/assets/videos/hero-vid3.mov" type="video/mp4" />
+        <source src="/videos/hero-vid3.mp4" type="video/mp4" media="(min-width: 1024px)" />
+        <source src="/videos/hero-vid3.mp4" type="video/mp4" media="(min-width: 768px)" />
+        <source src="/videos/hero-vid3.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
