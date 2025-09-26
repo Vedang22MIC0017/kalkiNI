@@ -14,16 +14,69 @@ const HeroVideo = () => {
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const isMobile = useMobile();
   const containerRef = useRef(null);
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    // Start muted and paused, show first frame
+    
+    // Set up video to show first frame
     v.muted = true;
     v.pause();
-    try { v.currentTime = 0.01; } catch (e) {}
+    
+    // Event listeners to ensure first frame is shown
+    const handleLoadedMetadata = () => {
+      try {
+        v.currentTime = 0.01; // Seek to first frame
+      } catch (e) {
+        console.warn('Could not seek to first frame:', e);
+      }
+    };
+    
+    const handleLoadedData = () => {
+      setVideoLoaded(true);
+      try {
+        v.currentTime = 0.01; // Ensure we're at the first frame
+        // Force a repaint to show the first frame
+        v.pause();
+      } catch (e) {
+        console.warn('Could not seek to first frame on loadeddata:', e);
+      }
+    };
+    
+    const handleCanPlayThrough = () => {
+      try {
+        v.currentTime = 0.01; // Final attempt to show first frame
+      } catch (e) {
+        console.warn('Could not seek to first frame on canplaythrough:', e);
+      }
+    };
+    
+    const handleError = (e) => {
+      console.error('Video loading error:', e);
+      setVideoLoaded(true); // Remove loading overlay even on error
+    };
+    
+    const handleSeeked = () => {
+      // Called when currentTime is successfully changed
+      setVideoLoaded(true);
+    };
+    
+    v.addEventListener('loadedmetadata', handleLoadedMetadata);
+    v.addEventListener('loadeddata', handleLoadedData);
+    v.addEventListener('canplaythrough', handleCanPlayThrough);
+    v.addEventListener('error', handleError);
+    v.addEventListener('seeked', handleSeeked);
+    
+    return () => {
+      v.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      v.removeEventListener('loadeddata', handleLoadedData);
+      v.removeEventListener('canplaythrough', handleCanPlayThrough);
+      v.removeEventListener('error', handleError);
+      v.removeEventListener('seeked', handleSeeked);
+    };
   }, []);
 
   const handleMouseEnter = () => {
@@ -70,19 +123,22 @@ const HeroVideo = () => {
       onPointerEnter={handleMouseEnter}
       onPointerLeave={handleMouseLeave}
     >
+      {/* Loading overlay - shows until video is loaded */}
+      {!videoLoaded && (
+        <div className="absolute inset-0 bg-n-8/20 backdrop-blur-[1px] flex items-center justify-center z-10">
+          <div className="w-8 h-8 border-2 border-color-1 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
       <video
         ref={videoRef}
-        className="w-full h-full object-cover"
+        className={`w-full h-full object-cover transition-opacity duration-300 ${
+          videoLoaded ? 'opacity-100' : 'opacity-90'
+        }`}
+        poster="/videos/hero-vid3-poster.jpg"
         playsInline
         muted
         loop
-        preload="auto"
-        onLoadedData={() => {
-          const v = videoRef.current;
-          if (v) {
-            try { v.currentTime = 0.01; } catch (e) {}
-          }
-        }}
+        preload="metadata"
       >
         <source src="/videos/hero-vid3.mp4" type="video/mp4" media="(min-width: 1024px)" />
         <source src="/videos/hero-vid3.mp4" type="video/mp4" media="(min-width: 768px)" />
@@ -93,7 +149,7 @@ const HeroVideo = () => {
       {/* Play/Pause button for small devices - top left */}
       <button
         type="button"
-        className="sm:hidden absolute top-2 left-2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center z-20"
+        className="sm:hidden absolute top-2 left-2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 flex items-center justify-center z-30"
         onClick={togglePlay}
         aria-label={isPlaying ? "Pause video" : "Play video"}
       >
@@ -114,7 +170,7 @@ const HeroVideo = () => {
       </button>
 
       {/* Mute button - visible on all devices */}
-      <div className="absolute top-2 right-2 flex gap-2 z-10">
+      <div className="absolute top-2 right-2 flex gap-2 z-30">
         <button
           type="button"
           className="px-3 py-1 rounded-md bg-black/30 text-white text-xs border border-white/10 backdrop-blur"
