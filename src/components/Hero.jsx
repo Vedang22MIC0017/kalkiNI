@@ -22,16 +22,28 @@ const HeroVideo = () => {
     const video = videoRef.current;
     if (!video) return;
     
+    // Reset state when component mounts
+    setIsLoaded(false);
+    setIsPlaying(false);
+    
     // Set initial state
     video.muted = true;
     video.currentTime = 0;
     
     // Handle video events
     const handleLoadedData = () => {
-      console.log('Video loaded and ready to play');
+      console.log('Video loadeddata event fired');
+      // Don't set currentTime here as it can cause issues
+    };
+    
+    const handleCanPlay = () => {
+      console.log('Video can play - setting loaded state');
       setIsLoaded(true);
-      // Set to first frame
-      video.currentTime = 0.1;
+    };
+    
+    const handleCanPlayThrough = () => {
+      console.log('Video can play through - fully loaded');
+      setIsLoaded(true);
     };
     
     const handlePlay = () => {
@@ -45,17 +57,43 @@ const HeroVideo = () => {
     };
     
     const handleError = (e) => {
-      console.error('Video error:', e);
-      setIsLoaded(true); // Remove loading state
+      console.error('Video error:', e.target.error);
+      setIsLoaded(true); // Remove loading state even on error
     };
     
+    const handleLoadStart = () => {
+      console.log('Video load started');
+      setIsLoaded(false);
+    };
+    
+    // Check if video is already loaded (in case events fired before listeners were added)
+    if (video.readyState >= 3) { // HAVE_FUTURE_DATA or higher
+      console.log('Video already loaded on mount');
+      setIsLoaded(true);
+    }
+    
+    video.addEventListener('loadstart', handleLoadStart);
     video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('canplaythrough', handleCanPlayThrough);
     video.addEventListener('play', handlePlay);
     video.addEventListener('pause', handlePause);
     video.addEventListener('error', handleError);
     
+    // Fallback timeout to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      if (!isLoaded && video.readyState > 0) {
+        console.log('Loading timeout - forcing loaded state');
+        setIsLoaded(true);
+      }
+    }, 5000); // 5 second timeout
+    
     return () => {
+      clearTimeout(loadingTimeout);
+      video.removeEventListener('loadstart', handleLoadStart);
       video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('canplaythrough', handleCanPlayThrough);
       video.removeEventListener('play', handlePlay);
       video.removeEventListener('pause', handlePause);
       video.removeEventListener('error', handleError);
@@ -145,7 +183,9 @@ const HeroVideo = () => {
         playsInline
         muted
         loop
-        preload="auto"
+        preload="metadata"
+        crossOrigin="anonymous"
+        controlsList="nodownload"
       >
         <source src="/videos/hero-vid3.mp4" type="video/mp4" media="(min-width: 1024px)" />
         <source src="/videos/hero-vid3.mp4" type="video/mp4" media="(min-width: 768px)" />
